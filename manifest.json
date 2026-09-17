@@ -1,7 +1,7 @@
 {
-  "name": "Who Wants to Be a Ham? — Technician Exam Trainer",
+  "name": "Who Wants to Be a Ham? \u2014 Technician Exam Trainer",
   "short_name": "Ham Trainer",
-  "description": "Practice the 2026–2030 Technician amateur radio exam question pool, including official diagrams and 35-question mock exams.",
+  "description": "Study for the 2026\u20132030 amateur radio Technician exam, game-show style.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
