@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Final Answer: Technician Class</title>
 
+<!-- PWA setup -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0b1220">
 <meta name="mobile-web-app-capable" content="yes">
@@ -33,6 +34,7 @@
 
   *{box-sizing:border-box;}
   html,body{height:100%;}
+
   body{
     margin:0;
     min-height:100vh;
@@ -46,7 +48,7 @@
     padding:28px 16px 60px;
   }
 
-  button{font:inherit;}
+  button,input,select{font:inherit;}
   .hidden{display:none !important;}
 
   .studio-label{
@@ -75,7 +77,7 @@
     font-size:14px;
     margin:0 0 22px;
     text-align:center;
-    max-width:650px;
+    max-width:620px;
     line-height:1.45;
   }
 
@@ -88,7 +90,7 @@
     align-items:start;
   }
 
-  @media (max-width:820px){
+  @media(max-width:820px){
     .layout{grid-template-columns:1fr;}
     .sidebar{order:2;}
   }
@@ -143,10 +145,62 @@
     line-height:1.35;
   }
 
+  .exam-options{
+    max-width:560px;
+    margin:22px auto 0;
+    padding:14px 16px;
+    background:rgba(5,8,16,.38);
+    border:1px solid var(--panel-edge);
+    border-radius:8px;
+    text-align:left;
+  }
+
+  .exam-options-title{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.08em;
+    color:var(--amber);
+    margin-bottom:10px;
+  }
+
+  .option-row{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    color:var(--ink);
+    font-size:13px;
+    line-height:1.45;
+    margin:8px 0;
+    flex-wrap:wrap;
+  }
+
+  .option-row input[type="checkbox"]{
+    accent-color:var(--amber);
+  }
+
+  .timer-input{
+    width:72px;
+    background:var(--bg-1);
+    color:var(--ink);
+    border:1px solid var(--panel-edge);
+    border-radius:5px;
+    padding:5px 7px;
+    font-family:var(--mono);
+  }
+
+  .timer-input:disabled{opacity:.4;}
+
+  .option-note{
+    font-size:11px;
+    color:var(--ink-dim);
+    line-height:1.45;
+    margin-top:8px;
+  }
+
   .pool-status{
     margin-top:18px;
-    color:var(--ink-dim);
     font-family:var(--mono);
+    color:var(--ink-dim);
     font-size:11px;
     line-height:1.5;
   }
@@ -174,9 +228,15 @@
     color:var(--dial-green);
     letter-spacing:.03em;
   }
-  .readout b{color:var(--ink);}
 
-  .controls{display:flex;gap:8px;flex-wrap:wrap;}
+  .readout b{color:var(--ink);}
+  .readout .timer-warn{color:var(--alert-red);}
+
+  .controls{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
 
   .icon-btn{
     background:var(--bg-1);
@@ -189,7 +249,11 @@
     cursor:pointer;
     transition:color .15s,border-color .15s;
   }
-  .icon-btn:hover{color:var(--amber);border-color:var(--amber-dim);}
+
+  .icon-btn:hover{
+    color:var(--amber);
+    border-color:var(--amber-dim);
+  }
 
   /* ---------- Question card ---------- */
   .card{
@@ -204,7 +268,7 @@
     font-family:var(--mono);
     font-size:11px;
     color:var(--amber);
-    letter-spacing:.06em;
+    letter-spacing:.08em;
     margin-bottom:10px;
     line-height:1.45;
   }
@@ -213,35 +277,33 @@
     font-size:clamp(17px,2.4vw,21px);
     line-height:1.45;
     font-weight:700;
-    margin-bottom:20px;
+    margin-bottom:22px;
     min-height:2.9em;
   }
 
-  .figure-wrap{
-    margin:0 0 22px;
+  .question-figure{
+    margin:-4px 0 22px;
     border:1px solid var(--panel-edge);
-    border-radius:8px;
+    border-radius:7px;
     background:#fff;
     overflow:hidden;
-    text-align:center;
   }
 
-  .figure-wrap img{
-    display:block;
+  .question-figure img{
     width:100%;
-    max-height:430px;
+    max-height:440px;
     object-fit:contain;
-    margin:0 auto;
+    display:block;
     background:#fff;
   }
 
-  .figure-wrap figcaption{
-    color:#394150;
+  .figure-label{
+    padding:6px 10px;
     background:#eef1f5;
-    border-top:1px solid #d7dce3;
+    color:#374151;
     font-family:var(--mono);
-    font-size:11px;
-    padding:7px 10px;
+    font-size:10.5px;
+    text-align:center;
   }
 
   .choices{
@@ -250,7 +312,7 @@
     gap:12px;
   }
 
-  @media (max-width:560px){
+  @media(max-width:560px){
     .choices{grid-template-columns:1fr;}
     .card{padding:20px 16px 18px;}
   }
@@ -268,7 +330,7 @@
     cursor:pointer;
     text-align:left;
     color:var(--ink);
-    transition:border-color .12s,background .12s,transform .08s,opacity .12s;
+    transition:border-color .12s,background .12s,transform .08s;
   }
 
   .choice:hover:not(.locked){
@@ -293,9 +355,9 @@
 
   .choice.selected{
     border-color:var(--amber);
-    background:linear-gradient(180deg,rgba(232,179,78,.15),rgba(232,179,78,.06));
-    box-shadow:0 0 14px rgba(232,179,78,.13);
+    background:linear-gradient(180deg,rgba(232,179,78,.14),rgba(232,179,78,.05));
   }
+
   .choice.selected .letter{
     color:#1c1300;
     background:var(--amber);
@@ -305,23 +367,32 @@
   .choice.correct{
     border-color:var(--dial-green);
     background:linear-gradient(180deg,rgba(57,255,138,.14),rgba(57,255,138,.05));
-    box-shadow:0 0 18px 2px rgba(57,255,138,.38),inset 0 0 12px rgba(57,255,138,.12);
+    box-shadow:0 0 18px 2px rgba(57,255,138,.45),inset 0 0 12px rgba(57,255,138,.15);
+    animation:pulse-green 1.1s ease-in-out infinite;
   }
+
   .choice.correct .letter{
     color:#04140a;
     background:var(--dial-green);
     border-color:var(--dial-green);
   }
 
+  @keyframes pulse-green{
+    0%,100%{box-shadow:0 0 14px 1px rgba(57,255,138,.35),inset 0 0 10px rgba(57,255,138,.12);}
+    50%{box-shadow:0 0 26px 4px rgba(57,255,138,.65),inset 0 0 16px rgba(57,255,138,.22);}
+  }
+
   .choice.wrong-picked{
     border-color:var(--alert-red);
     background:linear-gradient(180deg,rgba(255,77,77,.14),rgba(255,77,77,.05));
   }
+
   .choice.wrong-picked .letter{
     color:#2a0505;
     background:var(--alert-red);
     border-color:var(--alert-red);
   }
+
   .choice.wrong-picked::after{
     content:"✕";
     margin-left:auto;
@@ -334,6 +405,7 @@
     opacity:.35;
     filter:grayscale(1);
   }
+
   .choice.locked{cursor:default;}
 
   .card-footer{
@@ -341,42 +413,56 @@
     justify-content:space-between;
     align-items:center;
     margin-top:20px;
-    min-height:38px;
+    min-height:34px;
     gap:12px;
+  }
+
+  .nav-buttons{
+    display:flex;
+    gap:8px;
+    flex-shrink:0;
   }
 
   .verdict{
     font-family:var(--mono);
-    font-size:12.5px;
-    line-height:1.45;
-    color:var(--ink-dim);
+    font-size:13px;
+    line-height:1.4;
   }
+
   .verdict.good{color:var(--dial-green);}
   .verdict.bad{color:var(--alert-red);}
   .verdict.neutral{color:var(--amber);}
 
-  .next-btn{
-    background:var(--amber);
-    color:#1c1300;
+  .next-btn,.prev-btn{
     border:none;
-    padding:10px 22px;
+    padding:10px 18px;
     border-radius:6px;
     font-weight:800;
     font-size:14px;
     cursor:pointer;
     font-family:var(--sans);
-    flex-shrink:0;
   }
-  .next-btn:disabled{
+
+  .next-btn{
+    background:var(--amber);
+    color:#1c1300;
+  }
+
+  .prev-btn{
+    background:var(--bg-1);
+    color:var(--ink);
+    border:1px solid var(--panel-edge);
+  }
+
+  .next-btn:disabled,.prev-btn:disabled{
     background:var(--panel-edge);
     color:var(--ink-dim);
     cursor:not-allowed;
+    border-color:var(--panel-edge);
   }
 
-  /* ---------- Sidebar ---------- */
-  .sidebar{
-    min-width:0;
-  }
+  /* ---------- Ladder / sidebar ---------- */
+  .sidebar{min-width:0;}
 
   .ladder{
     background:var(--panel);
@@ -384,7 +470,7 @@
     border-radius:10px;
     padding:14px 10px;
     display:flex;
-    flex-direction:column;
+    flex-direction:column-reverse;
     gap:3px;
     max-height:640px;
     overflow-y:auto;
@@ -408,54 +494,80 @@
     border:1px solid var(--amber-dim);
   }
 
-  .rung.done-neutral{color:#b9c6da;}
   .rung.done-correct{color:var(--dial-green);}
   .rung.done-wrong{color:var(--alert-red);}
+  .rung.done-hidden{color:#b9c6da;}
 
-  .progress-panel{
+  /* ---------- Question library ---------- */
+  .library-toolbar{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 210px;
+    gap:10px;
+    margin-bottom:16px;
+  }
+
+  @media(max-width:620px){
+    .library-toolbar{grid-template-columns:1fr;}
+  }
+
+  .library-control{
+    width:100%;
+    background:var(--bg-1);
+    border:1px solid var(--panel-edge);
+    color:var(--ink);
+    border-radius:6px;
+    padding:10px 12px;
+    font-family:var(--mono);
+    font-size:12px;
+  }
+
+  .library-list{
     background:var(--panel);
     border:1px solid var(--panel-edge);
     border-radius:10px;
-    padding:18px 16px;
+    padding:10px;
+    max-height:640px;
+    overflow-y:auto;
   }
 
-  .progress-title{
-    color:var(--amber);
+  .library-count{
     font-family:var(--mono);
-    font-size:11px;
-    letter-spacing:.08em;
-    margin-bottom:12px;
-  }
-
-  .progress-big{
-    font-family:var(--mono);
-    font-size:24px;
-    font-weight:800;
-    color:var(--ink);
-    margin-bottom:4px;
-  }
-
-  .progress-meta{
-    font-family:var(--mono);
-    font-size:11px;
+    font-size:10.5px;
     color:var(--ink-dim);
-    line-height:1.5;
+    padding:5px 7px 9px;
   }
 
-  .progress-track{
-    height:8px;
-    border-radius:999px;
-    background:var(--bg-1);
-    border:1px solid var(--panel-edge);
-    overflow:hidden;
-    margin:14px 0 12px;
+  .library-item{
+    display:block;
+    width:100%;
+    background:transparent;
+    color:var(--ink-dim);
+    border:1px solid transparent;
+    border-radius:4px;
+    padding:7px 8px;
+    margin:2px 0;
+    text-align:left;
+    cursor:pointer;
+    font-family:var(--mono);
+    font-size:11px;
   }
 
-  .progress-fill{
-    height:100%;
-    width:0;
-    background:var(--amber);
-    transition:width .2s ease;
+  .library-item:hover{
+    color:var(--amber);
+    border-color:var(--amber-dim);
+  }
+
+  .library-item.current{
+    background:rgba(232,179,78,.15);
+    color:var(--amber);
+    border-color:var(--amber-dim);
+  }
+
+  .library-empty{
+    color:var(--ink-dim);
+    font-size:12px;
+    line-height:1.45;
+    padding:12px 8px;
   }
 
   /* ---------- Result screen ---------- */
@@ -468,7 +580,7 @@
   }
 
   .result .big{
-    font-size:clamp(44px,8vw,56px);
+    font-size:56px;
     font-weight:900;
     font-family:var(--mono);
     margin:10px 0;
@@ -478,63 +590,86 @@
     color:var(--dial-green);
     text-shadow:0 0 26px rgba(57,255,138,.5);
   }
+
   .result .big.fail{
     color:var(--alert-red);
     text-shadow:0 0 26px rgba(255,77,77,.4);
   }
-  .result .big.practice{color:var(--amber);}
 
   .result p{
     color:var(--ink-dim);
     font-size:14px;
     line-height:1.55;
   }
-
-  .footnote{
-    max-width:1080px;
-    width:100%;
-    margin-top:20px;
-    color:#657894;
-    font-size:11px;
-    line-height:1.55;
-    text-align:center;
-  }
-  .footnote a{color:#7f96b8;}
 </style>
 </head>
 
 <body>
+
 <div class="studio-label">TECHNICIAN CLASS · ELEMENT 2 · 2026–2030</div>
 <h1>Who Wants to Be a <span>Ham?</span></h1>
 <p class="subhead">
-  Practice with the current Technician question pool. Practice mode gives immediate feedback;
-  Mock Exam hides correctness until all 35 questions are complete.
+  Study for the amateur radio Technician exam, game-show style. Pick your answer — wrong choices grey out, the right one lights up.
 </p>
 
 <div class="layout">
-  <main>
+  <div>
     <!-- MODE SELECT -->
-    <section id="mode-screen" class="mode-screen">
+    <div id="mode-screen" class="mode-screen">
       <div class="cat-tag" style="text-align:center">CHOOSE YOUR FORMAT</div>
+
       <div class="mode-buttons">
         <button id="practice-btn" class="mode-btn" disabled onclick="startGame('practice')">
           Practice Mode
-          <small>All pool questions · immediate feedback · shuffled</small>
+          <small>Untimed, full official question bank, shuffled</small>
         </button>
+
         <button id="exam-btn" class="mode-btn" disabled onclick="startGame('exam')">
           Mock Exam
-          <small>35 groups · one question per group · pass at 26/35</small>
+          <small>35 official groups · pass at 74% (26/35)</small>
+        </button>
+
+        <button id="library-btn" class="mode-btn" disabled onclick="openLibrary()">
+          Question Library
+          <small>Search and open any official question directly</small>
         </button>
       </div>
-      <div id="pool-status" class="pool-status">Loading the 2026–2030 Technician question pool…</div>
-    </section>
 
-    <!-- GAME / REVIEW SCREEN -->
-    <section id="game-screen" class="hidden">
+      <div class="exam-options">
+        <div class="exam-options-title">MOCK EXAM OPTIONS</div>
+
+        <label class="option-row">
+          <input id="hide-answers-option" type="checkbox">
+          <span>Hide answers until exam is finished</span>
+        </label>
+
+        <label class="option-row">
+          <input id="timer-option" type="checkbox" onchange="syncTimerOption()">
+          <span>Use practice timer</span>
+          <input id="timer-minutes" class="timer-input" type="number" value="60" min="1" max="240" disabled>
+          <span>minutes</span>
+        </label>
+
+        <div class="option-note">
+          The FCC Technician exam has no national time limit. This optional practice timer auto-submits the mock exam at 0:00.
+        </div>
+      </div>
+
+      <div id="pool-status" class="pool-status">Loading the 2026–2030 Technician question pool…</div>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="game-screen" class="hidden">
       <div class="bar">
-        <div class="readout" id="readout">Loading…</div>
+        <div class="readout" id="readout">
+          Q <b id="qnum">1</b>/<span id="qtotal">35</span>
+          &nbsp;|&nbsp; <span id="score-label">SCORE</span>
+          <b id="score">0</b>/<span id="answered">0</span>
+          <span id="timer-readout" class="hidden"></span>
+        </div>
+
         <div class="controls">
-          <button id="restart-btn" class="icon-btn" onclick="shuffleAndRestart()">⟳ Restart</button>
+          <button class="icon-btn" onclick="shuffleAndRestart()">⟳ Shuffle</button>
           <button class="icon-btn" onclick="quitToMenu()">■ Menu</button>
         </div>
       </div>
@@ -543,74 +678,113 @@
         <div class="cat-tag" id="category">QUESTION</div>
         <div class="question" id="question-text">Loading question…</div>
 
-        <figure id="figure-wrap" class="figure-wrap hidden">
-          <img id="question-figure" alt="">
-          <figcaption id="figure-caption"></figcaption>
-        </figure>
+        <div id="question-figure" class="question-figure hidden">
+          <img id="question-figure-img" alt="">
+          <div id="figure-label" class="figure-label"></div>
+        </div>
 
         <div class="choices" id="choices"></div>
 
         <div class="card-footer">
-          <div class="verdict" id="verdict" aria-live="polite"></div>
-          <button class="next-btn" id="next-btn" disabled onclick="nextQuestion()">Next Question →</button>
+          <div class="verdict" id="verdict"></div>
+          <div class="nav-buttons">
+            <button class="prev-btn" id="prev-btn" onclick="previousQuestion()">← Previous</button>
+            <button class="next-btn" id="next-btn" disabled onclick="nextQuestion()">Next Question →</button>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
+
+    <!-- LIBRARY SCREEN -->
+    <div id="library-screen" class="hidden">
+      <div class="bar">
+        <div class="readout">OFFICIAL QUESTION LIBRARY · <b id="library-total">409</b> QUESTIONS</div>
+        <div class="controls">
+          <button class="icon-btn" onclick="quitLibrary()">■ Menu</button>
+        </div>
+      </div>
+
+      <div class="library-toolbar">
+        <input
+          id="library-search"
+          class="library-control"
+          type="search"
+          placeholder="Search T1A01, FCC, antenna, Ohm..."
+          oninput="applyLibraryFilter()"
+          autocomplete="off"
+        >
+
+        <select id="library-filter" class="library-control" onchange="applyLibraryFilter()">
+          <option value="">All questions</option>
+        </select>
+      </div>
+
+      <div class="card">
+        <div class="cat-tag" id="library-category">SELECT A QUESTION</div>
+        <div class="question" id="library-question">Choose a question from the list.</div>
+
+        <div id="library-figure" class="question-figure hidden">
+          <img id="library-figure-img" alt="">
+          <div id="library-figure-label" class="figure-label"></div>
+        </div>
+
+        <div class="choices" id="library-choices"></div>
+
+        <div class="card-footer">
+          <div class="verdict" id="library-verdict"></div>
+          <div class="nav-buttons">
+            <button class="prev-btn" id="library-prev" onclick="libraryPrevious()">← Previous</button>
+            <button class="next-btn" id="library-next" onclick="libraryNext()">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- RESULT SCREEN -->
-    <section id="result-screen" class="hidden">
+    <div id="result-screen" class="hidden">
       <div class="result">
         <div class="cat-tag" style="text-align:center" id="result-tag">EXAM COMPLETE</div>
-        <div class="big" id="result-big">0/35</div>
-        <p id="result-sub"></p>
+        <div class="big" id="result-big">28/35</div>
+        <p id="result-sub">80% — that's a pass.</p>
+
         <div class="mode-buttons">
-          <button id="review-btn" class="mode-btn hidden" onclick="startReview()">Review Missed</button>
           <button class="mode-btn" onclick="startGame(lastMode)">Try Again</button>
           <button class="mode-btn" onclick="quitToMenu()">Back to Menu</button>
         </div>
       </div>
-    </section>
-  </main>
-
-  <aside class="sidebar">
-    <div class="ladder hidden" id="ladder"></div>
-
-    <div class="progress-panel hidden" id="progress-panel">
-      <div class="progress-title" id="progress-title">PRACTICE PROGRESS</div>
-      <div class="progress-big" id="progress-big">1 / 409</div>
-      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
-      <div class="progress-meta" id="progress-meta"></div>
     </div>
-  </aside>
-</div>
+  </div>
 
-<div class="footnote">
-  Question pool content is from the public-domain NCVEC 2026–2030 Technician pool.
-  The app loads a machine-readable mirror from
-  <a href="https://github.com/russolsen/ham_radio_question_pool" target="_blank" rel="noopener">ham_radio_question_pool</a>
-  and caches it for offline use.
+  <div class="sidebar">
+    <div class="ladder" id="ladder"></div>
+
+    <div id="library-list" class="library-list hidden">
+      <div id="library-count" class="library-count"></div>
+      <div id="library-items"></div>
+    </div>
+  </div>
 </div>
 
 <script>
 'use strict';
 
 /* --------------------------------------------------------------------------
-   Data source
+   2026-2030 Technician pool
    --------------------------------------------------------------------------
-   The official NCVEC pool is public domain. This mirror converts it to JSON
-   without changing the questions and includes the official figure filenames.
-   The app validates the pool structure and the four Feb. 19, 2026 corrected
-   question wordings before enabling the quiz.
+   The NCVEC pool is public domain. This app loads the machine-readable
+   conversion maintained at russolsen/ham_radio_question_pool and validates
+   its structure plus the four Feb. 19, 2026 wording corrections before use.
 --------------------------------------------------------------------------- */
+
 const POOL_URL =
   'https://raw.githubusercontent.com/russolsen/ham_radio_question_pool/refs/heads/main/technician-2026-2030/technician-2026-2030.json';
 
 const FIGURE_BASE_URL =
   'https://raw.githubusercontent.com/russolsen/ham_radio_question_pool/refs/heads/main/technician-2026-2030/';
 
-const POOL_STORAGE_KEY = 'ham-tech-pool-2026-2030-v1';
+const POOL_STORAGE_KEY = 'ham-tech-pool-2026-2030-v2';
 
-const SUBELEMENTS = {
+const SUBELEMENT_NAMES = {
   T1: "COMMISSION'S RULES",
   T2: 'OPERATING PROCEDURES',
   T3: 'RADIO WAVE CHARACTERISTICS',
@@ -622,6 +796,8 @@ const SUBELEMENTS = {
   T9: 'ANTENNAS & FEED LINES',
   T0: 'SAFETY'
 };
+
+const SUBELEMENT_ORDER = ['T1','T2','T3','T4','T5','T6','T7','T8','T9','T0'];
 
 const REQUIRED_2026_ERRATA = {
   T1C01: 'For which classes of amateur radio licenses does the FCC currently issue new licenses?',
@@ -635,27 +811,46 @@ let bank = [];
 let mode = 'practice';
 let lastMode = 'practice';
 let idx = 0;
-let correctCount = 0;
-let answeredCount = 0;
-let lastResult = null;
 
-/* ---------- Utilities ---------- */
-function shuffled(input){
-  const arr = [...input];
-  for(let i = arr.length - 1; i > 0; i--){
+/* Mock-exam settings captured at exam start. */
+let examHideAnswers = false;
+let examTimed = false;
+let examMinutes = 60;
+
+/* Timer state. */
+let timerInterval = null;
+let timerEndsAt = null;
+
+/* Library state. */
+let libraryFiltered = [];
+let libraryCurrentId = null;
+const libraryAnswers = new Map();
+
+/* ---------- General utilities ---------- */
+
+function shuffle(arr){
+  const a = arr.slice();
+
+  for(let i = a.length - 1; i > 0; i--){
     const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+    [a[i], a[j]] = [a[j], a[i]];
   }
-  return arr;
+
+  return a;
 }
 
 function groupId(questionId){
   return questionId.slice(0, 3);
 }
 
+function safeFigureUrl(filename){
+  if(!filename) return '';
+  return FIGURE_BASE_URL + encodeURIComponent(filename);
+}
+
 function validatePool(pool){
   if(!Array.isArray(pool) || pool.length < 400){
-    throw new Error('The downloaded question pool is incomplete.');
+    throw new Error('Downloaded pool appears incomplete.');
   }
 
   const ids = new Set();
@@ -663,16 +858,20 @@ function validatePool(pool){
 
   for(const q of pool){
     if(
-      !q || typeof q.id !== 'string' ||
+      !q ||
+      typeof q.id !== 'string' ||
       typeof q.question !== 'string' ||
-      !Array.isArray(q.answers) || q.answers.length !== 4 ||
-      !Number.isInteger(q.correct) || q.correct < 0 || q.correct > 3
+      !Array.isArray(q.answers) ||
+      q.answers.length !== 4 ||
+      !Number.isInteger(q.correct) ||
+      q.correct < 0 ||
+      q.correct > 3
     ){
-      throw new Error('The question pool contains an invalid record.');
+      throw new Error('Question pool contains an invalid record.');
     }
 
     if(ids.has(q.id)){
-      throw new Error('The question pool contains duplicate question IDs.');
+      throw new Error(`Duplicate question ID: ${q.id}`);
     }
 
     ids.add(q.id);
@@ -680,216 +879,430 @@ function validatePool(pool){
   }
 
   if(groups.size !== 35){
-    throw new Error(`Expected 35 exam groups, found ${groups.size}.`);
+    throw new Error(`Expected 35 official question groups; found ${groups.size}.`);
   }
 
   for(const [id, expectedText] of Object.entries(REQUIRED_2026_ERRATA)){
     const q = pool.find(item => item.id === id);
+
     if(!q || q.question !== expectedText){
-      throw new Error(`The question pool does not contain the corrected wording for ${id}.`);
+      throw new Error(`Pool is missing the corrected 2026 wording for ${id}.`);
     }
   }
-
-  return true;
 }
 
 async function loadPool(){
   const status = document.getElementById('pool-status');
 
   try{
-    let loaded = null;
+    let loaded;
     let source = 'network';
 
     try{
-      const response = await fetch(POOL_URL, { cache: 'no-store' });
-      if(!response.ok) throw new Error(`HTTP ${response.status}`);
+      const response = await fetch(POOL_URL, {cache:'no-store'});
+
+      if(!response.ok){
+        throw new Error(`HTTP ${response.status}`);
+      }
+
       loaded = await response.json();
       validatePool(loaded);
 
       try{
         localStorage.setItem(POOL_STORAGE_KEY, JSON.stringify(loaded));
       }catch(storageError){
-        console.warn('Question pool could not be stored in localStorage:', storageError);
+        console.warn('Could not save question pool to localStorage:', storageError);
       }
     }catch(networkError){
-      const cachedText = localStorage.getItem(POOL_STORAGE_KEY);
-      if(!cachedText) throw networkError;
+      const cached = localStorage.getItem(POOL_STORAGE_KEY);
 
-      loaded = JSON.parse(cachedText);
+      if(!cached){
+        throw networkError;
+      }
+
+      loaded = JSON.parse(cached);
       validatePool(loaded);
-      source = 'offline cache';
+      source = 'offline copy';
     }
 
     questionPool = loaded;
+
     document.getElementById('practice-btn').disabled = false;
     document.getElementById('exam-btn').disabled = false;
+    document.getElementById('library-btn').disabled = false;
+    document.getElementById('library-total').textContent = questionPool.length;
+
+    buildLibraryFilter();
 
     status.className = 'pool-status good';
     status.textContent =
-      `${questionPool.length} questions loaded · 35 exam groups · ${source === 'network' ? 'current source checked' : 'offline copy'}`;
+      `${questionPool.length} official questions loaded · 35 exam groups · ${source}`;
 
   }catch(error){
     console.error(error);
     status.className = 'pool-status bad';
     status.textContent =
-      'Could not load the official question pool. Connect to the internet once, then reload. ' +
-      `(${error.message})`;
+      `Could not load the 2026–2030 pool. Connect to the internet and reload. (${error.message})`;
   }
 }
 
-function prepareQuestion(raw){
-  const answerOrder = shuffled([0, 1, 2, 3]);
+/* ---------- Question preparation ---------- */
+
+function prepareQuestion(raw, shuffleAnswers = true){
+  const order = shuffleAnswers ? shuffle([0,1,2,3]) : [0,1,2,3];
 
   return {
     id: raw.id,
     group: groupId(raw.id),
     refs: raw.refs || '',
-    question: raw.question,
+    q: raw.question,
     figure: raw.figure || '',
-    choices: answerOrder.map(i => raw.answers[i]),
-    correctIndex: answerOrder.indexOf(raw.correct),
-    selectedIndex: null
+    choices: order.map(i => raw.answers[i]),
+    correctIndex: order.indexOf(raw.correct),
+
+    /* Per-run answer state. */
+    selectedIndex: null,
+    locked: false
   };
 }
 
 function buildPracticeBank(){
-  return shuffled(questionPool).map(prepareQuestion);
+  return shuffle(questionPool).map(raw => prepareQuestion(raw, true));
 }
 
 function buildExamBank(){
   const grouped = new Map();
 
-  for(const q of questionPool){
-    const group = groupId(q.id);
-    if(!grouped.has(group)) grouped.set(group, []);
-    grouped.get(group).push(q);
-  }
+  questionPool.forEach(raw => {
+    const group = groupId(raw.id);
+
+    if(!grouped.has(group)){
+      grouped.set(group, []);
+    }
+
+    grouped.get(group).push(raw);
+  });
 
   if(grouped.size !== 35){
-    throw new Error(`Cannot build exam: expected 35 groups, found ${grouped.size}.`);
+    throw new Error(`Expected 35 question groups; found ${grouped.size}.`);
   }
 
   const selected = [];
+
   for(const questions of grouped.values()){
     selected.push(questions[Math.floor(Math.random() * questions.length)]);
   }
 
-  return shuffled(selected).map(prepareQuestion);
+  return shuffle(selected).map(raw => prepareQuestion(raw, true));
 }
 
-/* ---------- Navigation / mode ---------- */
-function startGame(requestedMode){
+/* ---------- Counts / score ---------- */
+
+function answeredCount(){
+  return bank.filter(item => item.selectedIndex !== null).length;
+}
+
+function correctCount(){
+  return bank.filter(
+    item => item.selectedIndex !== null && item.selectedIndex === item.correctIndex
+  ).length;
+}
+
+/* ---------- Mock-exam options ---------- */
+
+function syncTimerOption(){
+  const enabled = document.getElementById('timer-option').checked;
+  document.getElementById('timer-minutes').disabled = !enabled;
+}
+
+function captureExamOptions(){
+  examHideAnswers = document.getElementById('hide-answers-option').checked;
+  examTimed = document.getElementById('timer-option').checked;
+
+  const parsed = Number(document.getElementById('timer-minutes').value);
+  examMinutes = Number.isFinite(parsed) ? Math.min(240, Math.max(1, parsed)) : 60;
+
+  document.getElementById('timer-minutes').value = examMinutes;
+}
+
+/* ---------- Mode navigation ---------- */
+
+function showOnly(screenId){
+  ['mode-screen','game-screen','library-screen','result-screen'].forEach(id => {
+    document.getElementById(id).classList.toggle('hidden', id !== screenId);
+  });
+}
+
+function startGame(m){
   if(!questionPool.length) return;
 
-  lastMode = requestedMode;
-  mode = requestedMode;
+  stopTimer();
 
-  try{
-    bank = requestedMode === 'exam' ? buildExamBank() : buildPracticeBank();
-  }catch(error){
-    alert(error.message);
-    return;
+  mode = m;
+  lastMode = m;
+
+  if(mode === 'exam'){
+    captureExamOptions();
+    bank = buildExamBank();
+  }else{
+    bank = buildPracticeBank();
+    examHideAnswers = false;
+    examTimed = false;
   }
 
   idx = 0;
-  correctCount = 0;
-  answeredCount = 0;
-  lastResult = null;
 
-  document.getElementById('mode-screen').classList.add('hidden');
-  document.getElementById('result-screen').classList.add('hidden');
-  document.getElementById('game-screen').classList.remove('hidden');
-  document.getElementById('restart-btn').classList.remove('hidden');
+  showOnly('game-screen');
+
+  document.getElementById('qtotal').textContent = bank.length;
+  document.getElementById('ladder').classList.remove('hidden');
+  document.getElementById('library-list').classList.add('hidden');
+
+  buildLadder();
+
+  if(mode === 'exam' && examTimed){
+    startTimer(examMinutes);
+  }else{
+    document.getElementById('timer-readout').classList.add('hidden');
+  }
 
   renderQuestion();
 }
 
 function shuffleAndRestart(){
-  if(mode === 'review'){
-    startGame(lastMode);
-  }else{
-    startGame(mode);
-  }
+  startGame(mode);
 }
 
 function quitToMenu(){
-  document.getElementById('game-screen').classList.add('hidden');
-  document.getElementById('result-screen').classList.add('hidden');
-  document.getElementById('mode-screen').classList.remove('hidden');
+  stopTimer();
+  showOnly('mode-screen');
+  document.getElementById('ladder').classList.remove('hidden');
+  document.getElementById('library-list').classList.add('hidden');
+  document.getElementById('ladder').innerHTML = '';
+}
+
+function openLibrary(){
+  if(!questionPool.length) return;
+
+  stopTimer();
+  showOnly('library-screen');
+
   document.getElementById('ladder').classList.add('hidden');
-  document.getElementById('progress-panel').classList.add('hidden');
+  document.getElementById('library-list').classList.remove('hidden');
+
+  document.getElementById('library-search').value = '';
+  document.getElementById('library-filter').value = '';
+
+  libraryCurrentId = questionPool[0].id;
+  applyLibraryFilter();
+  selectLibraryQuestion(libraryCurrentId);
 }
 
-/* ---------- Rendering ---------- */
-function updateReadout(){
-  const readout = document.getElementById('readout');
+function quitLibrary(){
+  quitToMenu();
+}
 
-  if(mode === 'exam'){
-    const selectedNow = bank[idx]?.selectedIndex !== null ? 1 : 0;
-    const recordedBefore = idx;
-    readout.innerHTML =
-      `Q <b>${idx + 1}</b>/${bank.length} &nbsp;|&nbsp; MOCK EXAM &nbsp;|&nbsp; ANSWERED <b>${recordedBefore + selectedNow}</b>/${bank.length}`;
-  }else if(mode === 'review'){
-    readout.innerHTML =
-      `REVIEW <b>${idx + 1}</b>/${bank.length} &nbsp;|&nbsp; MISSED QUESTIONS`;
-  }else{
-    readout.innerHTML =
-      `Q <b>${idx + 1}</b>/${bank.length} &nbsp;|&nbsp; SCORE <b>${correctCount}</b>/${answeredCount}`;
+/* ---------- Timer ---------- */
+
+function startTimer(minutes){
+  stopTimer();
+
+  timerEndsAt = Date.now() + minutes * 60 * 1000;
+  document.getElementById('timer-readout').classList.remove('hidden');
+
+  updateTimerDisplay();
+
+  timerInterval = setInterval(() => {
+    updateTimerDisplay();
+
+    if(timerEndsAt !== null && Date.now() >= timerEndsAt){
+      stopTimer();
+      showResults(true);
+    }
+  }, 250);
+}
+
+function stopTimer(){
+  if(timerInterval){
+    clearInterval(timerInterval);
   }
+
+  timerInterval = null;
+  timerEndsAt = null;
 }
 
-function renderFigure(item){
-  const wrap = document.getElementById('figure-wrap');
-  const img = document.getElementById('question-figure');
-  const caption = document.getElementById('figure-caption');
+function remainingSeconds(){
+  if(timerEndsAt === null) return 0;
+  return Math.max(0, Math.ceil((timerEndsAt - Date.now()) / 1000));
+}
 
-  if(!item.figure){
-    wrap.classList.add('hidden');
-    img.removeAttribute('src');
-    img.alt = '';
-    caption.textContent = '';
+function formatTimer(seconds){
+  const minutes = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${minutes}:${String(secs).padStart(2,'0')}`;
+}
+
+function updateTimerDisplay(){
+  const el = document.getElementById('timer-readout');
+
+  if(!examTimed || timerEndsAt === null){
+    el.classList.add('hidden');
     return;
   }
 
-  const figureName = item.figure.replace(/\.[^.]+$/, '').toUpperCase();
-  img.src = FIGURE_BASE_URL + encodeURIComponent(item.figure);
-  img.alt = `${figureName} schematic diagram used by question ${item.id}`;
-  caption.textContent = `${figureName} · referenced by ${item.id}`;
-  wrap.classList.remove('hidden');
+  const remaining = remainingSeconds();
+  el.classList.remove('hidden');
+  el.innerHTML =
+    ` &nbsp;|&nbsp; TIME <b class="${remaining <= 300 ? 'timer-warn' : ''}">${formatTimer(remaining)}</b>`;
+}
+
+/* ---------- Ladder ---------- */
+
+function buildLadder(){
+  const ladder = document.getElementById('ladder');
+  ladder.innerHTML = '';
+
+  for(let i = 0; i < bank.length; i++){
+    const div = document.createElement('div');
+    div.className = 'rung';
+    div.id = `rung-${i}`;
+
+    const left = document.createElement('span');
+    left.textContent = `Q${i + 1}`;
+
+    const mark = document.createElement('span');
+    mark.id = `rung-mark-${i}`;
+
+    div.append(left, mark);
+    ladder.appendChild(div);
+  }
+}
+
+function updateLadder(){
+  for(let i = 0; i < bank.length; i++){
+    const rung = document.getElementById(`rung-${i}`);
+    const mark = document.getElementById(`rung-mark-${i}`);
+
+    if(!rung || !mark) continue;
+
+    rung.classList.remove('current','done-correct','done-wrong','done-hidden');
+
+    const item = bank[i];
+
+    if(i === idx){
+      rung.classList.add('current');
+    }
+
+    if(item.selectedIndex !== null){
+      if(mode === 'exam' && examHideAnswers){
+        if(i !== idx) rung.classList.add('done-hidden');
+        mark.textContent = '●';
+      }else{
+        const correct = item.selectedIndex === item.correctIndex;
+        rung.classList.add(correct ? 'done-correct' : 'done-wrong');
+        mark.textContent = correct ? '✓' : '✕';
+      }
+    }else{
+      mark.textContent = '';
+    }
+  }
+
+  const current = document.getElementById(`rung-${idx}`);
+
+  if(current){
+    current.scrollIntoView({block:'nearest'});
+  }
+}
+
+/* ---------- Question rendering ---------- */
+
+function setQuestionFigure(containerId, imageId, labelId, item){
+  const container = document.getElementById(containerId);
+  const image = document.getElementById(imageId);
+  const label = document.getElementById(labelId);
+
+  if(!item.figure){
+    container.classList.add('hidden');
+    image.removeAttribute('src');
+    image.alt = '';
+    label.textContent = '';
+    return;
+  }
+
+  const name = item.figure.replace(/\.[^.]+$/, '').toUpperCase();
+
+  image.src = safeFigureUrl(item.figure);
+  image.alt = `${name} diagram for ${item.id}`;
+  label.textContent = `${name} · referenced by ${item.id}`;
+  container.classList.remove('hidden');
 }
 
 function renderQuestion(){
   const item = bank[idx];
+
   if(!item) return;
 
-  updateReadout();
+  document.getElementById('qnum').textContent = idx + 1;
 
-  const subelement = item.id.slice(0, 2);
-  const refsText = item.refs ? ` · ${item.refs}` : '';
+  const scoreLabel = document.getElementById('score-label');
+  const score = document.getElementById('score');
+  const answered = document.getElementById('answered');
+
+  if(mode === 'exam' && examHideAnswers){
+    scoreLabel.textContent = 'ANSWERED';
+    score.textContent = answeredCount();
+    answered.textContent = bank.length;
+  }else{
+    scoreLabel.textContent = 'SCORE';
+    score.textContent = correctCount();
+    answered.textContent = answeredCount();
+  }
+
+  const subelement = item.id.slice(0,2);
+  const refs = item.refs ? ` · ${item.refs}` : '';
+
   document.getElementById('category').textContent =
-    `${item.id} · ${SUBELEMENTS[subelement] || subelement}${refsText}`;
+    `${item.id} · ${SUBELEMENT_NAMES[subelement] || subelement}${refs}`;
 
-  document.getElementById('question-text').textContent = item.question;
-  renderFigure(item);
+  document.getElementById('question-text').textContent = item.q;
 
-  const choicesEl = document.getElementById('choices');
-  choicesEl.replaceChildren();
+  setQuestionFigure(
+    'question-figure',
+    'question-figure-img',
+    'figure-label',
+    item
+  );
 
-  item.choices.forEach((choiceText, choiceIndex) => {
+  const verdict = document.getElementById('verdict');
+  verdict.textContent = '';
+  verdict.className = 'verdict';
+
+  const wrap = document.getElementById('choices');
+  wrap.innerHTML = '';
+
+  const letters = ['A','B','C','D'];
+
+  item.choices.forEach((text, choiceIndex) => {
     const button = document.createElement('button');
     button.className = 'choice';
     button.type = 'button';
 
     const letter = document.createElement('span');
     letter.className = 'letter';
-    letter.textContent = String.fromCharCode(65 + choiceIndex);
+    letter.textContent = letters[choiceIndex];
 
-    const label = document.createElement('span');
-    label.textContent = choiceText;
+    const content = document.createElement('span');
+    content.textContent = text;
 
-    button.append(letter, label);
+    button.append(letter, content);
 
-    if(mode === 'review'){
+    if(mode === 'exam' && examHideAnswers){
+      if(item.selectedIndex === choiceIndex){
+        button.classList.add('selected');
+      }
+
+      button.onclick = () => selectChoice(choiceIndex);
+    }else if(item.locked){
       button.classList.add('locked');
 
       if(choiceIndex === item.correctIndex){
@@ -899,276 +1312,395 @@ function renderQuestion(){
       }else{
         button.classList.add('greyed');
       }
-    }else if(mode === 'practice' && item.selectedIndex !== null){
-      button.classList.add('locked');
-
-      if(choiceIndex === item.correctIndex){
-        button.classList.add('correct');
-      }else if(choiceIndex === item.selectedIndex){
-        button.classList.add('wrong-picked');
-      }else{
-        button.classList.add('greyed');
-      }
-    }else if(mode === 'exam' && item.selectedIndex === choiceIndex){
-      button.classList.add('selected');
+    }else{
+      button.onclick = () => selectChoice(choiceIndex);
     }
 
-    if(mode !== 'review'){
-      button.addEventListener('click', () => selectChoice(choiceIndex));
-    }
-
-    choicesEl.appendChild(button);
+    wrap.appendChild(button);
   });
 
-  renderVerdictAndNext(item);
-  renderSidebar();
-}
+  renderCurrentVerdict();
 
-function renderVerdictAndNext(item){
-  const verdict = document.getElementById('verdict');
+  const prev = document.getElementById('prev-btn');
   const next = document.getElementById('next-btn');
 
+  prev.disabled = idx === 0;
+
+  const hasAnswer = item.selectedIndex !== null;
+  next.disabled = !hasAnswer;
+
+  if(idx === bank.length - 1){
+    next.textContent = mode === 'exam' ? 'Submit Exam →' : 'See Results →';
+  }else{
+    next.textContent = 'Next Question →';
+  }
+
+  updateLadder();
+  updateTimerDisplay();
+}
+
+function renderCurrentVerdict(){
+  const item = bank[idx];
+  const verdict = document.getElementById('verdict');
+
+  verdict.textContent = '';
   verdict.className = 'verdict';
 
-  if(mode === 'review'){
-    const chosen = item.selectedIndex === null ? 'No answer' : item.choices[item.selectedIndex];
-    const correct = item.choices[item.correctIndex];
-
-    verdict.textContent = item.selectedIndex === item.correctIndex
-      ? `Correct answer: ${correct}`
-      : `Your answer: ${chosen} · Correct answer: ${correct}`;
-
-    verdict.classList.add(item.selectedIndex === item.correctIndex ? 'good' : 'bad');
-    next.disabled = false;
-    next.textContent = idx === bank.length - 1 ? 'Return to Results →' : 'Next Missed →';
-    return;
-  }
-
-  if(mode === 'exam'){
-    if(item.selectedIndex === null){
-      verdict.textContent = 'Select an answer. Correctness stays hidden until the exam is complete.';
-      next.disabled = true;
-    }else{
-      verdict.textContent = 'Answer selected. You can change it before moving on.';
-      verdict.classList.add('neutral');
-      next.disabled = false;
-    }
-
-    next.textContent = idx === bank.length - 1 ? 'Finish Exam →' : 'Next Question →';
-    return;
-  }
-
-  /* Practice mode */
   if(item.selectedIndex === null){
-    verdict.textContent = 'Choose an answer for immediate feedback.';
-    next.disabled = true;
-  }else{
-    const correct = item.selectedIndex === item.correctIndex;
-    verdict.textContent = correct
-      ? 'Correct.'
-      : `Not quite. Correct answer: ${item.choices[item.correctIndex]}`;
-    verdict.classList.add(correct ? 'good' : 'bad');
-    next.disabled = false;
-  }
-
-  next.textContent = idx === bank.length - 1 ? 'Finish Practice →' : 'Next Question →';
-}
-
-function renderSidebar(){
-  const ladder = document.getElementById('ladder');
-  const progress = document.getElementById('progress-panel');
-
-  if(mode === 'exam'){
-    progress.classList.add('hidden');
-    ladder.classList.remove('hidden');
-    ladder.replaceChildren();
-
-    bank.forEach((item, i) => {
-      const rung = document.createElement('div');
-      rung.className = 'rung';
-
-      if(i === idx) rung.classList.add('current');
-      else if(i < idx) rung.classList.add('done-neutral');
-
-      const left = document.createElement('span');
-      left.textContent = String(i + 1).padStart(2, '0');
-
-      const right = document.createElement('span');
-      right.textContent = item.group;
-
-      rung.append(left, right);
-      ladder.appendChild(rung);
-    });
-
-    const current = ladder.children[idx];
-    if(current) current.scrollIntoView({block:'nearest'});
     return;
   }
 
-  ladder.classList.add('hidden');
-  progress.classList.remove('hidden');
+  if(mode === 'exam' && examHideAnswers){
+    verdict.textContent = 'Answer selected. You may change it until the exam is submitted.';
+    verdict.className = 'verdict neutral';
+    return;
+  }
 
-  const title = document.getElementById('progress-title');
-  const big = document.getElementById('progress-big');
-  const fill = document.getElementById('progress-fill');
-  const meta = document.getElementById('progress-meta');
+  const isCorrect = item.selectedIndex === item.correctIndex;
 
-  if(mode === 'review'){
-    title.textContent = 'MISSED-QUESTION REVIEW';
-    big.textContent = `${idx + 1} / ${bank.length}`;
-    fill.style.width = `${((idx + 1) / bank.length) * 100}%`;
-    meta.textContent = 'Correct answer is shown in green.';
+  if(isCorrect){
+    verdict.textContent = '✓ Correct.';
+    verdict.className = 'verdict good';
   }else{
-    title.textContent = 'PRACTICE PROGRESS';
-    big.textContent = `${idx + 1} / ${bank.length}`;
-    fill.style.width = `${(answeredCount / bank.length) * 100}%`;
-
-    const rate = answeredCount ? Math.round((correctCount / answeredCount) * 100) : 0;
-    meta.textContent =
-      `${answeredCount} answered · ${correctCount} correct` +
-      (answeredCount ? ` · ${rate}%` : '');
+    verdict.textContent = '✕ Incorrect — correct answer highlighted.';
+    verdict.className = 'verdict bad';
   }
 }
 
-/* ---------- Answer handling ---------- */
+/* ---------- Answer / previous / next ---------- */
+
 function selectChoice(choiceIndex){
   const item = bank[idx];
-  if(!item || mode === 'review') return;
 
-  if(mode === 'exam'){
+  if(!item) return;
+
+  /* Hidden-answer mock exams allow changes until final submission. */
+  if(mode === 'exam' && examHideAnswers){
     item.selectedIndex = choiceIndex;
     renderQuestion();
     return;
   }
 
-  /* Practice mode locks after first selection. */
-  if(item.selectedIndex !== null) return;
+  /* Normal Practice and normal Mock Exam preserve original first-answer lock. */
+  if(item.locked) return;
 
   item.selectedIndex = choiceIndex;
-  answeredCount++;
+  item.locked = true;
 
-  if(choiceIndex === item.correctIndex){
-    correctCount++;
-  }
+  renderQuestion();
+}
 
+function previousQuestion(){
+  if(idx <= 0) return;
+
+  idx--;
   renderQuestion();
 }
 
 function nextQuestion(){
   const item = bank[idx];
-  if(!item) return;
 
-  if(mode === 'review'){
-    if(idx >= bank.length - 1){
-      showStoredResult();
-    }else{
-      idx++;
-      renderQuestion();
-    }
-    return;
-  }
+  if(!item || item.selectedIndex === null) return;
 
-  if(item.selectedIndex === null) return;
-
-  if(idx >= bank.length - 1){
-    showResult();
-  }else{
+  if(idx < bank.length - 1){
     idx++;
     renderQuestion();
-  }
-}
-
-/* ---------- Results / review ---------- */
-function showResult(){
-  if(mode === 'exam'){
-    correctCount = bank.reduce(
-      (sum, item) => sum + (item.selectedIndex === item.correctIndex ? 1 : 0),
-      0
-    );
-    answeredCount = bank.length;
-  }
-
-  const total = bank.length;
-  const percent = total ? Math.round((correctCount / total) * 100) : 0;
-  const missed = bank.filter(item => item.selectedIndex !== item.correctIndex);
-
-  lastResult = {
-    sourceMode: mode,
-    correct: correctCount,
-    total,
-    percent,
-    missed,
-    bank: [...bank]
-  };
-
-  renderResult(lastResult);
-}
-
-function renderResult(result){
-  document.getElementById('game-screen').classList.add('hidden');
-  document.getElementById('mode-screen').classList.add('hidden');
-  document.getElementById('result-screen').classList.remove('hidden');
-  document.getElementById('ladder').classList.add('hidden');
-  document.getElementById('progress-panel').classList.add('hidden');
-
-  const big = document.getElementById('result-big');
-  const tag = document.getElementById('result-tag');
-  const sub = document.getElementById('result-sub');
-  const review = document.getElementById('review-btn');
-
-  big.textContent = `${result.correct}/${result.total}`;
-  big.className = 'big';
-
-  if(result.sourceMode === 'exam'){
-    const passed = result.correct >= 26;
-    tag.textContent = passed ? 'MOCK EXAM · PASS' : 'MOCK EXAM · NOT YET PASSING';
-    big.classList.add(passed ? 'pass' : 'fail');
-    sub.textContent =
-      `${result.percent}% correct. The Technician exam requires 26 correct answers out of 35. ` +
-      `${result.missed.length} question${result.missed.length === 1 ? '' : 's'} missed.`;
-  }else{
-    tag.textContent = 'PRACTICE COMPLETE';
-    big.classList.add('practice');
-    sub.textContent =
-      `${result.percent}% correct across ${result.total} questions. ` +
-      `${result.missed.length} question${result.missed.length === 1 ? '' : 's'} missed.`;
-  }
-
-  review.classList.toggle('hidden', result.missed.length === 0);
-}
-
-function startReview(){
-  if(!lastResult || !lastResult.missed.length) return;
-
-  mode = 'review';
-  bank = lastResult.missed;
-  idx = 0;
-
-  document.getElementById('result-screen').classList.add('hidden');
-  document.getElementById('game-screen').classList.remove('hidden');
-  document.getElementById('restart-btn').classList.add('hidden');
-
-  renderQuestion();
-}
-
-function showStoredResult(){
-  if(!lastResult){
-    quitToMenu();
     return;
   }
-  renderResult(lastResult);
+
+  showResults(false);
+}
+
+/* ---------- Results ---------- */
+
+function showResults(timedOut = false){
+  stopTimer();
+
+  showOnly('result-screen');
+
+  const total = bank.length;
+  const correct = correctCount();
+  const pct = total ? Math.round((correct / total) * 100) : 0;
+
+  const big = document.getElementById('result-big');
+  const sub = document.getElementById('result-sub');
+  const tag = document.getElementById('result-tag');
+
+  big.textContent = `${correct}/${total}`;
+
+  if(mode === 'exam'){
+    const passed = correct >= 26;
+
+    tag.textContent = timedOut
+      ? 'MOCK EXAM · TIME EXPIRED'
+      : 'MOCK EXAM COMPLETE';
+
+    big.className = `big ${passed ? 'pass' : 'fail'}`;
+
+    const unanswered = bank.filter(item => item.selectedIndex === null).length;
+    const timeoutText = timedOut
+      ? ` Time expired and the exam was submitted${unanswered ? ` with ${unanswered} unanswered` : ''}.`
+      : '';
+
+    sub.textContent = passed
+      ? `${pct}% — that's a pass. The real exam needs 26 correct answers out of 35.${timeoutText}`
+      : `${pct}% — below the 26/35 needed to pass.${timeoutText}`;
+  }else{
+    tag.textContent = 'PRACTICE COMPLETE';
+    big.className = `big ${pct >= 74 ? 'pass' : 'fail'}`;
+    sub.textContent = `${pct}% correct across ${total} practice questions.`;
+  }
+
+  document.getElementById('ladder').classList.remove('hidden');
+  document.getElementById('library-list').classList.add('hidden');
+}
+
+/* ---------- Question library ---------- */
+
+function buildLibraryFilter(){
+  const select = document.getElementById('library-filter');
+  select.innerHTML = '<option value="">All questions</option>';
+
+  for(const subelement of SUBELEMENT_ORDER){
+    const matching = questionPool.filter(q => q.id.startsWith(subelement));
+
+    if(!matching.length) continue;
+
+    const option = document.createElement('option');
+    option.value = subelement;
+    option.textContent = `${subelement} — ${SUBELEMENT_NAMES[subelement] || ''}`;
+    select.appendChild(option);
+
+    const groups = [...new Set(matching.map(q => groupId(q.id)))];
+
+    for(const group of groups){
+      const groupOption = document.createElement('option');
+      groupOption.value = group;
+      groupOption.textContent = `    ${group}`;
+      select.appendChild(groupOption);
+    }
+  }
+}
+
+function applyLibraryFilter(){
+  const search = document.getElementById('library-search').value.trim().toLowerCase();
+  const prefix = document.getElementById('library-filter').value;
+
+  libraryFiltered = questionPool.filter(q => {
+    if(prefix && !q.id.startsWith(prefix)) return false;
+
+    if(!search) return true;
+
+    const haystack = [
+      q.id,
+      q.refs || '',
+      q.question,
+      ...q.answers
+    ].join(' ').toLowerCase();
+
+    return haystack.includes(search);
+  });
+
+  if(
+    !libraryCurrentId ||
+    !libraryFiltered.some(q => q.id === libraryCurrentId)
+  ){
+    libraryCurrentId = libraryFiltered.length ? libraryFiltered[0].id : null;
+  }
+
+  renderLibraryList();
+
+  if(libraryCurrentId){
+    renderLibraryQuestion();
+  }else{
+    clearLibraryQuestion();
+  }
+}
+
+function renderLibraryList(){
+  const items = document.getElementById('library-items');
+  const count = document.getElementById('library-count');
+
+  count.textContent = `${libraryFiltered.length} matching question${libraryFiltered.length === 1 ? '' : 's'}`;
+  items.innerHTML = '';
+
+  if(!libraryFiltered.length){
+    const empty = document.createElement('div');
+    empty.className = 'library-empty';
+    empty.textContent = 'No questions match this search/filter.';
+    items.appendChild(empty);
+    return;
+  }
+
+  libraryFiltered.forEach(q => {
+    const button = document.createElement('button');
+    button.className = 'library-item';
+    button.type = 'button';
+    button.textContent = q.id;
+
+    if(q.id === libraryCurrentId){
+      button.classList.add('current');
+    }
+
+    button.onclick = () => selectLibraryQuestion(q.id);
+    items.appendChild(button);
+  });
+
+  const current = items.querySelector('.current');
+
+  if(current){
+    current.scrollIntoView({block:'nearest'});
+  }
+}
+
+function selectLibraryQuestion(questionId){
+  if(!questionPool.some(q => q.id === questionId)) return;
+
+  libraryCurrentId = questionId;
+  renderLibraryList();
+  renderLibraryQuestion();
+}
+
+function currentLibraryQuestion(){
+  return questionPool.find(q => q.id === libraryCurrentId) || null;
+}
+
+function renderLibraryQuestion(){
+  const q = currentLibraryQuestion();
+
+  if(!q){
+    clearLibraryQuestion();
+    return;
+  }
+
+  const subelement = q.id.slice(0,2);
+  const refs = q.refs ? ` · ${q.refs}` : '';
+
+  document.getElementById('library-category').textContent =
+    `${q.id} · ${SUBELEMENT_NAMES[subelement] || subelement}${refs}`;
+
+  document.getElementById('library-question').textContent = q.question;
+
+  setQuestionFigure(
+    'library-figure',
+    'library-figure-img',
+    'library-figure-label',
+    q
+  );
+
+  const wrap = document.getElementById('library-choices');
+  wrap.innerHTML = '';
+
+  const letters = ['A','B','C','D'];
+  const selectedIndex = libraryAnswers.has(q.id) ? libraryAnswers.get(q.id) : null;
+
+  q.answers.forEach((text, answerIndex) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'choice';
+
+    const letter = document.createElement('span');
+    letter.className = 'letter';
+    letter.textContent = letters[answerIndex];
+
+    const content = document.createElement('span');
+    content.textContent = text;
+
+    button.append(letter, content);
+
+    if(selectedIndex !== null){
+      button.classList.add('locked');
+
+      if(answerIndex === q.correct){
+        button.classList.add('correct');
+      }else if(answerIndex === selectedIndex){
+        button.classList.add('wrong-picked');
+      }else{
+        button.classList.add('greyed');
+      }
+    }else{
+      button.onclick = () => answerLibraryQuestion(answerIndex);
+    }
+
+    wrap.appendChild(button);
+  });
+
+  const verdict = document.getElementById('library-verdict');
+  verdict.textContent = '';
+  verdict.className = 'verdict';
+
+  if(selectedIndex !== null){
+    const correct = selectedIndex === q.correct;
+    verdict.textContent = correct
+      ? '✓ Correct.'
+      : `✕ Incorrect — official answer is ${letters[q.correct]}.`;
+    verdict.className = `verdict ${correct ? 'good' : 'bad'}`;
+  }
+
+  const position = libraryFiltered.findIndex(item => item.id === q.id);
+  document.getElementById('library-prev').disabled = position <= 0;
+  document.getElementById('library-next').disabled =
+    position < 0 || position >= libraryFiltered.length - 1;
+}
+
+function answerLibraryQuestion(answerIndex){
+  const q = currentLibraryQuestion();
+
+  if(!q || libraryAnswers.has(q.id)) return;
+
+  libraryAnswers.set(q.id, answerIndex);
+  renderLibraryQuestion();
+}
+
+function libraryPrevious(){
+  const q = currentLibraryQuestion();
+  if(!q) return;
+
+  const position = libraryFiltered.findIndex(item => item.id === q.id);
+
+  if(position > 0){
+    selectLibraryQuestion(libraryFiltered[position - 1].id);
+  }
+}
+
+function libraryNext(){
+  const q = currentLibraryQuestion();
+  if(!q) return;
+
+  const position = libraryFiltered.findIndex(item => item.id === q.id);
+
+  if(position >= 0 && position < libraryFiltered.length - 1){
+    selectLibraryQuestion(libraryFiltered[position + 1].id);
+  }
+}
+
+function clearLibraryQuestion(){
+  document.getElementById('library-category').textContent = 'NO MATCHING QUESTIONS';
+  document.getElementById('library-question').textContent =
+    'Change the search text or question-group filter.';
+  document.getElementById('library-choices').innerHTML = '';
+  document.getElementById('library-verdict').textContent = '';
+
+  const figure = document.getElementById('library-figure');
+  figure.classList.add('hidden');
+
+  document.getElementById('library-prev').disabled = true;
+  document.getElementById('library-next').disabled = true;
 }
 
 /* ---------- PWA ---------- */
+
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(error => {
-      console.warn('Service worker registration failed:', error);
+    navigator.serviceWorker.register('./sw.js').catch(err => {
+      console.warn('Service worker registration failed:', err);
     });
   });
 }
 
+syncTimerOption();
 loadPool();
 </script>
+
 </body>
 </html>
