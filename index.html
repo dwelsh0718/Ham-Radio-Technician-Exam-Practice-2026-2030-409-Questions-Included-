@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Final Answer: Technician Class</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b1220">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ham Trainer">
+<link rel="icon" href="favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<style>
+  :root{
+    --bg-0:#050810;
+    --bg-1:#0b1220;
+    --panel:#0f1a2e;
+    --panel-edge:#1c3350;
+    --amber:#e8b34e;
+    --amber-dim:#7a5f2c;
+    --dial-green:#39ff8a;
+    --dial-green-dim:#123a24;
+    --alert-red:#ff4d4d;
+    --ink:#eaf1fb;
+    --ink-dim:#8ea3c2;
+    --mono:'IBM Plex Mono','Courier New',monospace;
+    --sans:'Archivo','Segoe UI',sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse 120% 80% at 50% -10%, #16233c 0%, var(--bg-1) 45%, var(--bg-0) 100%);
+    color:var(--ink);
+    font-family:var(--sans);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:28px 16px 60px;
+  }
+
+  button{font:inherit;}
+  .hidden{display:none !important;}
+
+  .studio-label{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.14em;
+    color:var(--ink-dim);
+    border:1px solid var(--panel-edge);
+    padding:4px 10px;
+    border-radius:2px;
+    margin-bottom:14px;
+    background:rgba(255,255,255,.02);
+  }
+
+  h1{
+    font-size:clamp(24px,4vw,34px);
+    margin:0 0 4px;
+    font-weight:800;
+    letter-spacing:-.01em;
+    text-align:center;
+  }
+  h1 span{color:var(--amber);}
+
+  .subhead{
+    color:var(--ink-dim);
+    font-size:14px;
+    margin:0 0 22px;
+    text-align:center;
+    max-width:650px;
+    line-height:1.45;
+  }
+
+  .layout{
+    width:100%;
+    max-width:1080px;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 220px;
+    gap:22px;
+    align-items:start;
+  }
+
+  @media (max-width:820px){
+    .layout{grid-template-columns:1fr;}
+    .sidebar{order:2;}
+  }
+
+  /* ---------- Start / mode screen ---------- */
+  .mode-screen{
+    background:var(--panel);
+    border:1px solid var(--panel-edge);
+    border-radius:10px;
+    padding:32px;
+    text-align:center;
+  }
+
+  .mode-buttons{
+    display:flex;
+    gap:14px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-top:20px;
+  }
+
+  .mode-btn{
+    background:var(--bg-1);
+    border:1px solid var(--panel-edge);
+    color:var(--ink);
+    padding:16px 22px;
+    border-radius:8px;
+    font-family:var(--sans);
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+    transition:border-color .15s,transform .1s,opacity .15s;
+    min-width:180px;
+  }
+
+  .mode-btn:hover:not(:disabled){
+    border-color:var(--amber);
+    transform:translateY(-1px);
+  }
+
+  .mode-btn:disabled{
+    cursor:wait;
+    opacity:.45;
+  }
+
+  .mode-btn small{
+    display:block;
+    font-weight:400;
+    color:var(--ink-dim);
+    font-size:12px;
+    margin-top:6px;
+    line-height:1.35;
+  }
+
+  .pool-status{
+    margin-top:18px;
+    color:var(--ink-dim);
+    font-family:var(--mono);
+    font-size:11px;
+    line-height:1.5;
+  }
+  .pool-status.good{color:var(--dial-green);}
+  .pool-status.bad{color:var(--alert-red);}
+
+  /* ---------- Score / controls bar ---------- */
+  .bar{
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:16px;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+
+  .readout{
+    font-family:var(--mono);
+    background:var(--bg-1);
+    border:1px solid var(--panel-edge);
+    border-radius:6px;
+    padding:8px 14px;
+    font-size:13px;
+    color:var(--dial-green);
+    letter-spacing:.03em;
+  }
+  .readout b{color:var(--ink);}
+
+  .controls{display:flex;gap:8px;flex-wrap:wrap;}
+
+  .icon-btn{
+    background:var(--bg-1);
+    border:1px solid var(--panel-edge);
+    color:var(--ink-dim);
+    padding:8px 14px;
+    border-radius:6px;
+    font-family:var(--mono);
+    font-size:12px;
+    cursor:pointer;
+    transition:color .15s,border-color .15s;
+  }
+  .icon-btn:hover{color:var(--amber);border-color:var(--amber-dim);}
+
+  /* ---------- Question card ---------- */
+  .card{
+    background:var(--panel);
+    border:1px solid var(--panel-edge);
+    border-radius:10px;
+    padding:26px 26px 22px;
+    box-shadow:0 0 0 1px rgba(255,255,255,.01),0 20px 60px -20px rgba(0,0,0,.6);
+  }
+
+  .cat-tag{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--amber);
+    letter-spacing:.06em;
+    margin-bottom:10px;
+    line-height:1.45;
+  }
+
+  .question{
+    font-size:clamp(17px,2.4vw,21px);
+    line-height:1.45;
+    font-weight:700;
+    margin-bottom:20px;
+    min-height:2.9em;
+  }
+
+  .figure-wrap{
+    margin:0 0 22px;
+    border:1px solid var(--panel-edge);
+    border-radius:8px;
+    background:#fff;
+    overflow:hidden;
+    text-align:center;
+  }
+
+  .figure-wrap img{
+    display:block;
+    width:100%;
+    max-height:430px;
+    object-fit:contain;
+    margin:0 auto;
+    background:#fff;
+  }
+
+  .figure-wrap figcaption{
+    color:#394150;
+    background:#eef1f5;
+    border-top:1px solid #d7dce3;
+    font-family:var(--mono);
+    font-size:11px;
+    padding:7px 10px;
+  }
+
+  .choices{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+
+  @media (max-width:560px){
+    .choices{grid-template-columns:1fr;}
+    .card{padding:20px 16px 18px;}
+  }
+
+  .choice{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--bg-1);
+    border:1px solid var(--panel-edge);
+    border-radius:7px;
+    padding:13px 14px;
+    font-size:14.5px;
+    line-height:1.35;
+    cursor:pointer;
+    text-align:left;
+    color:var(--ink);
+    transition:border-color .12s,background .12s,transform .08s,opacity .12s;
+  }
+
+  .choice:hover:not(.locked){
+    border-color:var(--amber);
+    transform:translateX(2px);
+  }
+
+  .choice .letter{
+    font-family:var(--mono);
+    font-weight:700;
+    color:var(--amber-dim);
+    border:1px solid var(--panel-edge);
+    border-radius:50%;
+    width:24px;
+    height:24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    font-size:12px;
+  }
+
+  .choice.selected{
+    border-color:var(--amber);
+    background:linear-gradient(180deg,rgba(232,179,78,.15),rgba(232,179,78,.06));
+    box-shadow:0 0 14px rgba(232,179,78,.13);
+  }
+  .choice.selected .letter{
+    color:#1c1300;
+    background:var(--amber);
+    border-color:var(--amber);
+  }
+
+  .choice.correct{
+    border-color:var(--dial-green);
+    background:linear-gradient(180deg,rgba(57,255,138,.14),rgba(57,255,138,.05));
+    box-shadow:0 0 18px 2px rgba(57,255,138,.38),inset 0 0 12px rgba(57,255,138,.12);
+  }
+  .choice.correct .letter{
+    color:#04140a;
+    background:var(--dial-green);
+    border-color:var(--dial-green);
+  }
+
+  .choice.wrong-picked{
+    border-color:var(--alert-red);
+    background:linear-gradient(180deg,rgba(255,77,77,.14),rgba(255,77,77,.05));
+  }
+  .choice.wrong-picked .letter{
+    color:#2a0505;
+    background:var(--alert-red);
+    border-color:var(--alert-red);
+  }
+  .choice.wrong-picked::after{
+    content:"✕";
+    margin-left:auto;
+    color:var(--alert-red);
+    font-weight:900;
+    font-size:16px;
+  }
+
+  .choice.greyed{
+    opacity:.35;
+    filter:grayscale(1);
+  }
+  .choice.locked{cursor:default;}
+
+  .card-footer{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:20px;
+    min-height:38px;
+    gap:12px;
+  }
+
+  .verdict{
+    font-family:var(--mono);
+    font-size:12.5px;
+    line-height:1.45;
+    color:var(--ink-dim);
+  }
+  .verdict.good{color:var(--dial-green);}
+  .verdict.bad{color:var(--alert-red);}
+  .verdict.neutral{color:var(--amber);}
+
+  .next-btn{
+    background:var(--amber);
+    color:#1c1300;
+    border:none;
+    padding:10px 22px;
+    border-radius:6px;
+    font-weight:800;
+    font-size:14px;
+    cursor:pointer;
+    font-family:var(--sans);
+    flex-shrink:0;
+  }
+  .next-btn:disabled{
+    background:var(--panel-edge);
+    color:var(--ink-dim);
+    cursor:not-allowed;
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    min-width:0;
+  }
+
+  .ladder{
+    background:var(--panel);
+    border:1px solid var(--panel-edge);
+    border-radius:10px;
+    padding:14px 10px;
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+    max-height:640px;
+    overflow-y:auto;
+  }
+
+  .rung{
+    font-family:var(--mono);
+    font-size:11.5px;
+    padding:6px 10px;
+    border-radius:4px;
+    color:var(--ink-dim);
+    display:flex;
+    justify-content:space-between;
+    gap:8px;
+  }
+
+  .rung.current{
+    background:rgba(232,179,78,.15);
+    color:var(--amber);
+    font-weight:700;
+    border:1px solid var(--amber-dim);
+  }
+
+  .rung.done-neutral{color:#b9c6da;}
+  .rung.done-correct{color:var(--dial-green);}
+  .rung.done-wrong{color:var(--alert-red);}
+
+  .progress-panel{
+    background:var(--panel);
+    border:1px solid var(--panel-edge);
+    border-radius:10px;
+    padding:18px 16px;
+  }
+
+  .progress-title{
+    color:var(--amber);
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.08em;
+    margin-bottom:12px;
+  }
+
+  .progress-big{
+    font-family:var(--mono);
+    font-size:24px;
+    font-weight:800;
+    color:var(--ink);
+    margin-bottom:4px;
+  }
+
+  .progress-meta{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--ink-dim);
+    line-height:1.5;
+  }
+
+  .progress-track{
+    height:8px;
+    border-radius:999px;
+    background:var(--bg-1);
+    border:1px solid var(--panel-edge);
+    overflow:hidden;
+    margin:14px 0 12px;
+  }
+
+  .progress-fill{
+    height:100%;
+    width:0;
+    background:var(--amber);
+    transition:width .2s ease;
+  }
+
+  /* ---------- Result screen ---------- */
+  .result{
+    background:var(--panel);
+    border:1px solid var(--panel-edge);
+    border-radius:10px;
+    padding:40px 30px;
+    text-align:center;
+  }
+
+  .result .big{
+    font-size:clamp(44px,8vw,56px);
+    font-weight:900;
+    font-family:var(--mono);
+    margin:10px 0;
+  }
+
+  .result .big.pass{
+    color:var(--dial-green);
+    text-shadow:0 0 26px rgba(57,255,138,.5);
+  }
+  .result .big.fail{
+    color:var(--alert-red);
+    text-shadow:0 0 26px rgba(255,77,77,.4);
+  }
+  .result .big.practice{color:var(--amber);}
+
+  .result p{
+    color:var(--ink-dim);
+    font-size:14px;
+    line-height:1.55;
+  }
+
+  .footnote{
+    max-width:1080px;
+    width:100%;
+    margin-top:20px;
+    color:#657894;
+    font-size:11px;
+    line-height:1.55;
+    text-align:center;
+  }
+  .footnote a{color:#7f96b8;}
+</style>
+</head>
+
+<body>
+<div class="studio-label">TECHNICIAN CLASS · ELEMENT 2 · 2026–2030</div>
+<h1>Who Wants to Be a <span>Ham?</span></h1>
+<p class="subhead">
+  Practice with the current Technician question pool. Practice mode gives immediate feedback;
+  Mock Exam hides correctness until all 35 questions are complete.
+</p>
+
+<div class="layout">
+  <main>
+    <!-- MODE SELECT -->
+    <section id="mode-screen" class="mode-screen">
+      <div class="cat-tag" style="text-align:center">CHOOSE YOUR FORMAT</div>
+      <div class="mode-buttons">
+        <button id="practice-btn" class="mode-btn" disabled onclick="startGame('practice')">
+          Practice Mode
+          <small>All pool questions · immediate feedback · shuffled</small>
+        </button>
+        <button id="exam-btn" class="mode-btn" disabled onclick="startGame('exam')">
+          Mock Exam
+          <small>35 groups · one question per group · pass at 26/35</small>
+        </button>
+      </div>
+      <div id="pool-status" class="pool-status">Loading the 2026–2030 Technician question pool…</div>
+    </section>
+
+    <!-- GAME / REVIEW SCREEN -->
+    <section id="game-screen" class="hidden">
+      <div class="bar">
+        <div class="readout" id="readout">Loading…</div>
+        <div class="controls">
+          <button id="restart-btn" class="icon-btn" onclick="shuffleAndRestart()">⟳ Restart</button>
+          <button class="icon-btn" onclick="quitToMenu()">■ Menu</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cat-tag" id="category">QUESTION</div>
+        <div class="question" id="question-text">Loading question…</div>
+
+        <figure id="figure-wrap" class="figure-wrap hidden">
+          <img id="question-figure" alt="">
+          <figcaption id="figure-caption"></figcaption>
+        </figure>
+
+        <div class="choices" id="choices"></div>
+
+        <div class="card-footer">
+          <div class="verdict" id="verdict" aria-live="polite"></div>
+          <button class="next-btn" id="next-btn" disabled onclick="nextQuestion()">Next Question →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULT SCREEN -->
+    <section id="result-screen" class="hidden">
+      <div class="result">
+        <div class="cat-tag" style="text-align:center" id="result-tag">EXAM COMPLETE</div>
+        <div class="big" id="result-big">0/35</div>
+        <p id="result-sub"></p>
+        <div class="mode-buttons">
+          <button id="review-btn" class="mode-btn hidden" onclick="startReview()">Review Missed</button>
+          <button class="mode-btn" onclick="startGame(lastMode)">Try Again</button>
+          <button class="mode-btn" onclick="quitToMenu()">Back to Menu</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <aside class="sidebar">
+    <div class="ladder hidden" id="ladder"></div>
+
+    <div class="progress-panel hidden" id="progress-panel">
+      <div class="progress-title" id="progress-title">PRACTICE PROGRESS</div>
+      <div class="progress-big" id="progress-big">1 / 409</div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="progress-meta" id="progress-meta"></div>
+    </div>
+  </aside>
+</div>
+
+<div class="footnote">
+  Question pool content is from the public-domain NCVEC 2026–2030 Technician pool.
+  The app loads a machine-readable mirror from
+  <a href="https://github.com/russolsen/ham_radio_question_pool" target="_blank" rel="noopener">ham_radio_question_pool</a>
+  and caches it for offline use.
+</div>
+
+<script>
+'use strict';
+
+/* --------------------------------------------------------------------------
+   Data source
+   --------------------------------------------------------------------------
+   The official NCVEC pool is public domain. This mirror converts it to JSON
+   without changing the questions and includes the official figure filenames.
+   The app validates the pool structure and the four Feb. 19, 2026 corrected
+   question wordings before enabling the quiz.
+--------------------------------------------------------------------------- */
+const POOL_URL =
+  'https://raw.githubusercontent.com/russolsen/ham_radio_question_pool/refs/heads/main/technician-2026-2030/technician-2026-2030.json';
+
+const FIGURE_BASE_URL =
+  'https://raw.githubusercontent.com/russolsen/ham_radio_question_pool/refs/heads/main/technician-2026-2030/';
+
+const POOL_STORAGE_KEY = 'ham-tech-pool-2026-2030-v1';
+
+const SUBELEMENTS = {
+  T1: "COMMISSION'S RULES",
+  T2: 'OPERATING PROCEDURES',
+  T3: 'RADIO WAVE CHARACTERISTICS',
+  T4: 'AMATEUR RADIO PRACTICES',
+  T5: 'ELECTRICAL PRINCIPLES',
+  T6: 'ELECTRONIC & ELECTRICAL COMPONENTS',
+  T7: 'PRACTICAL CIRCUITS',
+  T8: 'SIGNALS & EMISSIONS',
+  T9: 'ANTENNAS & FEED LINES',
+  T0: 'SAFETY'
+};
+
+const REQUIRED_2026_ERRATA = {
+  T1C01: 'For which classes of amateur radio licenses does the FCC currently issue new licenses?',
+  T5A05: 'A difference in which of the following causes electron flow?',
+  T7A09: 'What is the function of the switch which selects either SSB or CW-FM on some VHF power amplifiers?',
+  T0A10: 'What hazard exists when rapidly charging or discharging an unprotected battery?'
+};
+
+let questionPool = [];
+let bank = [];
+let mode = 'practice';
+let lastMode = 'practice';
+let idx = 0;
+let correctCount = 0;
+let answeredCount = 0;
+let lastResult = null;
+
+/* ---------- Utilities ---------- */
+function shuffled(input){
+  const arr = [...input];
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function groupId(questionId){
+  return questionId.slice(0, 3);
+}
+
+function validatePool(pool){
+  if(!Array.isArray(pool) || pool.length < 400){
+    throw new Error('The downloaded question pool is incomplete.');
+  }
+
+  const ids = new Set();
+  const groups = new Set();
+
+  for(const q of pool){
+    if(
+      !q || typeof q.id !== 'string' ||
+      typeof q.question !== 'string' ||
+      !Array.isArray(q.answers) || q.answers.length !== 4 ||
+      !Number.isInteger(q.correct) || q.correct < 0 || q.correct > 3
+    ){
+      throw new Error('The question pool contains an invalid record.');
+    }
+
+    if(ids.has(q.id)){
+      throw new Error('The question pool contains duplicate question IDs.');
+    }
+
+    ids.add(q.id);
+    groups.add(groupId(q.id));
+  }
+
+  if(groups.size !== 35){
+    throw new Error(`Expected 35 exam groups, found ${groups.size}.`);
+  }
+
+  for(const [id, expectedText] of Object.entries(REQUIRED_2026_ERRATA)){
+    const q = pool.find(item => item.id === id);
+    if(!q || q.question !== expectedText){
+      throw new Error(`The question pool does not contain the corrected wording for ${id}.`);
+    }
+  }
+
+  return true;
+}
+
+async function loadPool(){
+  const status = document.getElementById('pool-status');
+
+  try{
+    let loaded = null;
+    let source = 'network';
+
+    try{
+      const response = await fetch(POOL_URL, { cache: 'no-store' });
+      if(!response.ok) throw new Error(`HTTP ${response.status}`);
+      loaded = await response.json();
+      validatePool(loaded);
+
+      try{
+        localStorage.setItem(POOL_STORAGE_KEY, JSON.stringify(loaded));
+      }catch(storageError){
+        console.warn('Question pool could not be stored in localStorage:', storageError);
+      }
+    }catch(networkError){
+      const cachedText = localStorage.getItem(POOL_STORAGE_KEY);
+      if(!cachedText) throw networkError;
+
+      loaded = JSON.parse(cachedText);
+      validatePool(loaded);
+      source = 'offline cache';
+    }
+
+    questionPool = loaded;
+    document.getElementById('practice-btn').disabled = false;
+    document.getElementById('exam-btn').disabled = false;
+
+    status.className = 'pool-status good';
+    status.textContent =
+      `${questionPool.length} questions loaded · 35 exam groups · ${source === 'network' ? 'current source checked' : 'offline copy'}`;
+
+  }catch(error){
+    console.error(error);
+    status.className = 'pool-status bad';
+    status.textContent =
+      'Could not load the official question pool. Connect to the internet once, then reload. ' +
+      `(${error.message})`;
+  }
+}
+
+function prepareQuestion(raw){
+  const answerOrder = shuffled([0, 1, 2, 3]);
+
+  return {
+    id: raw.id,
+    group: groupId(raw.id),
+    refs: raw.refs || '',
+    question: raw.question,
+    figure: raw.figure || '',
+    choices: answerOrder.map(i => raw.answers[i]),
+    correctIndex: answerOrder.indexOf(raw.correct),
+    selectedIndex: null
+  };
+}
+
+function buildPracticeBank(){
+  return shuffled(questionPool).map(prepareQuestion);
+}
+
+function buildExamBank(){
+  const grouped = new Map();
+
+  for(const q of questionPool){
+    const group = groupId(q.id);
+    if(!grouped.has(group)) grouped.set(group, []);
+    grouped.get(group).push(q);
+  }
+
+  if(grouped.size !== 35){
+    throw new Error(`Cannot build exam: expected 35 groups, found ${grouped.size}.`);
+  }
+
+  const selected = [];
+  for(const questions of grouped.values()){
+    selected.push(questions[Math.floor(Math.random() * questions.length)]);
+  }
+
+  return shuffled(selected).map(prepareQuestion);
+}
+
+/* ---------- Navigation / mode ---------- */
+function startGame(requestedMode){
+  if(!questionPool.length) return;
+
+  lastMode = requestedMode;
+  mode = requestedMode;
+
+  try{
+    bank = requestedMode === 'exam' ? buildExamBank() : buildPracticeBank();
+  }catch(error){
+    alert(error.message);
+    return;
+  }
+
+  idx = 0;
+  correctCount = 0;
+  answeredCount = 0;
+  lastResult = null;
+
+  document.getElementById('mode-screen').classList.add('hidden');
+  document.getElementById('result-screen').classList.add('hidden');
+  document.getElementById('game-screen').classList.remove('hidden');
+  document.getElementById('restart-btn').classList.remove('hidden');
+
+  renderQuestion();
+}
+
+function shuffleAndRestart(){
+  if(mode === 'review'){
+    startGame(lastMode);
+  }else{
+    startGame(mode);
+  }
+}
+
+function quitToMenu(){
+  document.getElementById('game-screen').classList.add('hidden');
+  document.getElementById('result-screen').classList.add('hidden');
+  document.getElementById('mode-screen').classList.remove('hidden');
+  document.getElementById('ladder').classList.add('hidden');
+  document.getElementById('progress-panel').classList.add('hidden');
+}
+
+/* ---------- Rendering ---------- */
+function updateReadout(){
+  const readout = document.getElementById('readout');
+
+  if(mode === 'exam'){
+    const selectedNow = bank[idx]?.selectedIndex !== null ? 1 : 0;
+    const recordedBefore = idx;
+    readout.innerHTML =
+      `Q <b>${idx + 1}</b>/${bank.length} &nbsp;|&nbsp; MOCK EXAM &nbsp;|&nbsp; ANSWERED <b>${recordedBefore + selectedNow}</b>/${bank.length}`;
+  }else if(mode === 'review'){
+    readout.innerHTML =
+      `REVIEW <b>${idx + 1}</b>/${bank.length} &nbsp;|&nbsp; MISSED QUESTIONS`;
+  }else{
+    readout.innerHTML =
+      `Q <b>${idx + 1}</b>/${bank.length} &nbsp;|&nbsp; SCORE <b>${correctCount}</b>/${answeredCount}`;
+  }
+}
+
+function renderFigure(item){
+  const wrap = document.getElementById('figure-wrap');
+  const img = document.getElementById('question-figure');
+  const caption = document.getElementById('figure-caption');
+
+  if(!item.figure){
+    wrap.classList.add('hidden');
+    img.removeAttribute('src');
+    img.alt = '';
+    caption.textContent = '';
+    return;
+  }
+
+  const figureName = item.figure.replace(/\.[^.]+$/, '').toUpperCase();
+  img.src = FIGURE_BASE_URL + encodeURIComponent(item.figure);
+  img.alt = `${figureName} schematic diagram used by question ${item.id}`;
+  caption.textContent = `${figureName} · referenced by ${item.id}`;
+  wrap.classList.remove('hidden');
+}
+
+function renderQuestion(){
+  const item = bank[idx];
+  if(!item) return;
+
+  updateReadout();
+
+  const subelement = item.id.slice(0, 2);
+  const refsText = item.refs ? ` · ${item.refs}` : '';
+  document.getElementById('category').textContent =
+    `${item.id} · ${SUBELEMENTS[subelement] || subelement}${refsText}`;
+
+  document.getElementById('question-text').textContent = item.question;
+  renderFigure(item);
+
+  const choicesEl = document.getElementById('choices');
+  choicesEl.replaceChildren();
+
+  item.choices.forEach((choiceText, choiceIndex) => {
+    const button = document.createElement('button');
+    button.className = 'choice';
+    button.type = 'button';
+
+    const letter = document.createElement('span');
+    letter.className = 'letter';
+    letter.textContent = String.fromCharCode(65 + choiceIndex);
+
+    const label = document.createElement('span');
+    label.textContent = choiceText;
+
+    button.append(letter, label);
+
+    if(mode === 'review'){
+      button.classList.add('locked');
+
+      if(choiceIndex === item.correctIndex){
+        button.classList.add('correct');
+      }else if(choiceIndex === item.selectedIndex){
+        button.classList.add('wrong-picked');
+      }else{
+        button.classList.add('greyed');
+      }
+    }else if(mode === 'practice' && item.selectedIndex !== null){
+      button.classList.add('locked');
+
+      if(choiceIndex === item.correctIndex){
+        button.classList.add('correct');
+      }else if(choiceIndex === item.selectedIndex){
+        button.classList.add('wrong-picked');
+      }else{
+        button.classList.add('greyed');
+      }
+    }else if(mode === 'exam' && item.selectedIndex === choiceIndex){
+      button.classList.add('selected');
+    }
+
+    if(mode !== 'review'){
+      button.addEventListener('click', () => selectChoice(choiceIndex));
+    }
+
+    choicesEl.appendChild(button);
+  });
+
+  renderVerdictAndNext(item);
+  renderSidebar();
+}
+
+function renderVerdictAndNext(item){
+  const verdict = document.getElementById('verdict');
+  const next = document.getElementById('next-btn');
+
+  verdict.className = 'verdict';
+
+  if(mode === 'review'){
+    const chosen = item.selectedIndex === null ? 'No answer' : item.choices[item.selectedIndex];
+    const correct = item.choices[item.correctIndex];
+
+    verdict.textContent = item.selectedIndex === item.correctIndex
+      ? `Correct answer: ${correct}`
+      : `Your answer: ${chosen} · Correct answer: ${correct}`;
+
+    verdict.classList.add(item.selectedIndex === item.correctIndex ? 'good' : 'bad');
+    next.disabled = false;
+    next.textContent = idx === bank.length - 1 ? 'Return to Results →' : 'Next Missed →';
+    return;
+  }
+
+  if(mode === 'exam'){
+    if(item.selectedIndex === null){
+      verdict.textContent = 'Select an answer. Correctness stays hidden until the exam is complete.';
+      next.disabled = true;
+    }else{
+      verdict.textContent = 'Answer selected. You can change it before moving on.';
+      verdict.classList.add('neutral');
+      next.disabled = false;
+    }
+
+    next.textContent = idx === bank.length - 1 ? 'Finish Exam →' : 'Next Question →';
+    return;
+  }
+
+  /* Practice mode */
+  if(item.selectedIndex === null){
+    verdict.textContent = 'Choose an answer for immediate feedback.';
+    next.disabled = true;
+  }else{
+    const correct = item.selectedIndex === item.correctIndex;
+    verdict.textContent = correct
+      ? 'Correct.'
+      : `Not quite. Correct answer: ${item.choices[item.correctIndex]}`;
+    verdict.classList.add(correct ? 'good' : 'bad');
+    next.disabled = false;
+  }
+
+  next.textContent = idx === bank.length - 1 ? 'Finish Practice →' : 'Next Question →';
+}
+
+function renderSidebar(){
+  const ladder = document.getElementById('ladder');
+  const progress = document.getElementById('progress-panel');
+
+  if(mode === 'exam'){
+    progress.classList.add('hidden');
+    ladder.classList.remove('hidden');
+    ladder.replaceChildren();
+
+    bank.forEach((item, i) => {
+      const rung = document.createElement('div');
+      rung.className = 'rung';
+
+      if(i === idx) rung.classList.add('current');
+      else if(i < idx) rung.classList.add('done-neutral');
+
+      const left = document.createElement('span');
+      left.textContent = String(i + 1).padStart(2, '0');
+
+      const right = document.createElement('span');
+      right.textContent = item.group;
+
+      rung.append(left, right);
+      ladder.appendChild(rung);
+    });
+
+    const current = ladder.children[idx];
+    if(current) current.scrollIntoView({block:'nearest'});
+    return;
+  }
+
+  ladder.classList.add('hidden');
+  progress.classList.remove('hidden');
+
+  const title = document.getElementById('progress-title');
+  const big = document.getElementById('progress-big');
+  const fill = document.getElementById('progress-fill');
+  const meta = document.getElementById('progress-meta');
+
+  if(mode === 'review'){
+    title.textContent = 'MISSED-QUESTION REVIEW';
+    big.textContent = `${idx + 1} / ${bank.length}`;
+    fill.style.width = `${((idx + 1) / bank.length) * 100}%`;
+    meta.textContent = 'Correct answer is shown in green.';
+  }else{
+    title.textContent = 'PRACTICE PROGRESS';
+    big.textContent = `${idx + 1} / ${bank.length}`;
+    fill.style.width = `${(answeredCount / bank.length) * 100}%`;
+
+    const rate = answeredCount ? Math.round((correctCount / answeredCount) * 100) : 0;
+    meta.textContent =
+      `${answeredCount} answered · ${correctCount} correct` +
+      (answeredCount ? ` · ${rate}%` : '');
+  }
+}
+
+/* ---------- Answer handling ---------- */
+function selectChoice(choiceIndex){
+  const item = bank[idx];
+  if(!item || mode === 'review') return;
+
+  if(mode === 'exam'){
+    item.selectedIndex = choiceIndex;
+    renderQuestion();
+    return;
+  }
+
+  /* Practice mode locks after first selection. */
+  if(item.selectedIndex !== null) return;
+
+  item.selectedIndex = choiceIndex;
+  answeredCount++;
+
+  if(choiceIndex === item.correctIndex){
+    correctCount++;
+  }
+
+  renderQuestion();
+}
+
+function nextQuestion(){
+  const item = bank[idx];
+  if(!item) return;
+
+  if(mode === 'review'){
+    if(idx >= bank.length - 1){
+      showStoredResult();
+    }else{
+      idx++;
+      renderQuestion();
+    }
+    return;
+  }
+
+  if(item.selectedIndex === null) return;
+
+  if(idx >= bank.length - 1){
+    showResult();
+  }else{
+    idx++;
+    renderQuestion();
+  }
+}
+
+/* ---------- Results / review ---------- */
+function showResult(){
+  if(mode === 'exam'){
+    correctCount = bank.reduce(
+      (sum, item) => sum + (item.selectedIndex === item.correctIndex ? 1 : 0),
+      0
+    );
+    answeredCount = bank.length;
+  }
+
+  const total = bank.length;
+  const percent = total ? Math.round((correctCount / total) * 100) : 0;
+  const missed = bank.filter(item => item.selectedIndex !== item.correctIndex);
+
+  lastResult = {
+    sourceMode: mode,
+    correct: correctCount,
+    total,
+    percent,
+    missed,
+    bank: [...bank]
+  };
+
+  renderResult(lastResult);
+}
+
+function renderResult(result){
+  document.getElementById('game-screen').classList.add('hidden');
+  document.getElementById('mode-screen').classList.add('hidden');
+  document.getElementById('result-screen').classList.remove('hidden');
+  document.getElementById('ladder').classList.add('hidden');
+  document.getElementById('progress-panel').classList.add('hidden');
+
+  const big = document.getElementById('result-big');
+  const tag = document.getElementById('result-tag');
+  const sub = document.getElementById('result-sub');
+  const review = document.getElementById('review-btn');
+
+  big.textContent = `${result.correct}/${result.total}`;
+  big.className = 'big';
+
+  if(result.sourceMode === 'exam'){
+    const passed = result.correct >= 26;
+    tag.textContent = passed ? 'MOCK EXAM · PASS' : 'MOCK EXAM · NOT YET PASSING';
+    big.classList.add(passed ? 'pass' : 'fail');
+    sub.textContent =
+      `${result.percent}% correct. The Technician exam requires 26 correct answers out of 35. ` +
+      `${result.missed.length} question${result.missed.length === 1 ? '' : 's'} missed.`;
+  }else{
+    tag.textContent = 'PRACTICE COMPLETE';
+    big.classList.add('practice');
+    sub.textContent =
+      `${result.percent}% correct across ${result.total} questions. ` +
+      `${result.missed.length} question${result.missed.length === 1 ? '' : 's'} missed.`;
+  }
+
+  review.classList.toggle('hidden', result.missed.length === 0);
+}
+
+function startReview(){
+  if(!lastResult || !lastResult.missed.length) return;
+
+  mode = 'review';
+  bank = lastResult.missed;
+  idx = 0;
+
+  document.getElementById('result-screen').classList.add('hidden');
+  document.getElementById('game-screen').classList.remove('hidden');
+  document.getElementById('restart-btn').classList.add('hidden');
+
+  renderQuestion();
+}
+
+function showStoredResult(){
+  if(!lastResult){
+    quitToMenu();
+    return;
+  }
+  renderResult(lastResult);
+}
+
+/* ---------- PWA ---------- */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(error => {
+      console.warn('Service worker registration failed:', error);
+    });
+  });
+}
+
+loadPool();
+</script>
+</body>
+</html>
